@@ -858,12 +858,16 @@ class PulseViewerDialog(QDialog):
 
             amp_env[mask] = amp
 
-        # HSP Duty: case1 local period(tl_hsp) 기준 active window 마스크
-        # active_len < tl_hsp 인 경우에만 마스킹 (active_len == tl_hsp이면 100% = 마스킹 없음)
-        if tl_hsp > 0 and active_len < tl_hsp * (1.0 - 1e-9):
+        # HSP Duty: M1 state(segments[0])에만 case1 local period(tl_hsp) 기준 마스킹 적용
+        # active_len == 0 (hsp_duty=0) 또는 active_len == tl_hsp (null/100%) → 마스킹 없음
+        if tl_hsp > 0 and 0 < active_len < tl_hsp * (1.0 - 1e-9) and segments:
+            m1_start = float(segments[0][0])
+            m1_end = float(segments[0][1])
+            m1_region = (phase_g >= m1_start - tol) & (phase_g <= m1_end + tol)
             phase_l = np.mod(t, tl_hsp)
-            hsp_mask = phase_l < active_len
-            amp_env = np.where(hsp_mask, amp_env, 0.0)
+            hsp_active = phase_l < active_len
+            # M1 영역에서만 HSP 비활성 구간을 0으로
+            amp_env = np.where(m1_region & ~hsp_active, 0.0, amp_env)
 
         return amp_env
 
