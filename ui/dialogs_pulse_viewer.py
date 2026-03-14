@@ -1420,6 +1420,7 @@ class PulseViewerDialog(QDialog):
             all_step_guides = []
             case2_items = []
             case13_items = []
+            max_total_duration = 0.0
 
             for r_idx, recipe in enumerate(checked_recipes):
                 color = _RECIPE_COLORS[r_idx % len(_RECIPE_COLORS)]
@@ -1433,6 +1434,7 @@ class PulseViewerDialog(QDialog):
                     if recipe_runtime["total_duration"] <= 0:
                         continue
 
+                    max_total_duration = max(max_total_duration, recipe_runtime["total_duration"])
                     curve = pw.plot(
                         [], [],
                         pen=pg.mkPen(color=color, width=1.2),
@@ -1457,6 +1459,7 @@ class PulseViewerDialog(QDialog):
                     if recipe_runtime["total_duration"] <= 0:
                         continue
 
+                    max_total_duration = max(max_total_duration, recipe_runtime["total_duration"])
                     curve = pw.plot(
                         [], [],
                         pen=pg.mkPen(color=color, width=1.5),
@@ -1491,6 +1494,10 @@ class PulseViewerDialog(QDialog):
                 box_l.addWidget(pw)
 
                 self._plot_widgets.append(pw)
+
+                # 초기 x-range를 데이터 범위로 설정 (기본값 [-1,1] 이면 아무것도 안 그려짐)
+                if max_total_duration > 0:
+                    pw.setXRange(0.0, max_total_duration, padding=0.02)
 
                 def _on_xrange_for_sync(_vb, x_range, source_pw=pw):
                     if not self.chk_sync.isChecked() or self._syncing:
