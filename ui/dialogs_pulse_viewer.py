@@ -691,6 +691,8 @@ class PulseViewerDialog(QDialog):
         """
         mode_pid = self._payload_pid(viewer_data.get("mode"))
         mode_text = (self._str_from_pid(step_params, mode_pid) or "").strip().upper()
+        if not mode_text:
+            mode_text = "PULSE"
 
         local_freq_hz = float(viewer_data.get("manual_freq_khz", 0.0) or 0.0) * 1000.0
         if local_freq_hz <= 0 or tg <= 0 or duration_sec <= 0:
@@ -989,6 +991,8 @@ class PulseViewerDialog(QDialog):
         """case1 파라미터를 경량 dict로 변환 (배열 생성 없음)."""
         mode_pid = self._payload_pid(viewer_data.get("mode"))
         mode_text = (self._str_from_pid(step_params, mode_pid) or "").strip().upper()
+        if not mode_text:
+            mode_text = "PULSE"
 
         freq_pid = self._payload_pid(viewer_data.get("freq_drop"))
         local_freq_hz = self._convert_freq_to_hz(
@@ -1044,6 +1048,8 @@ class PulseViewerDialog(QDialog):
         """case3 파라미터를 경량 dict로 변환 (배열 생성 없음)."""
         mode_pid = self._payload_pid(viewer_data.get("mode"))
         mode_text = (self._str_from_pid(step_params, mode_pid) or "").strip().upper()
+        if not mode_text:
+            mode_text = "PULSE"
 
         c3 = viewer_data.get("case3", {}) or {}
         p_duty  = self._safe_pct(self._num_from_pid(step_params, self._payload_pid(c3.get("pulse_duty"))), 50.0)
