@@ -188,6 +188,7 @@ class ViewerConfig:
     pid_c2_m2_duty: Optional[int] = None
     pid_c2_m3_duty: Optional[int] = None
     pid_c2_hsp_duty: Optional[int] = None
+    pid_c2_hsp_freq: Optional[int] = None
 
     # case3
     pid_c3_pulse_duty: Optional[int] = None
@@ -241,6 +242,7 @@ class ViewerCard(QGroupBox):
         self.c2_m3_duty = DropField("M3 Duty", self)
 
         self.c2_hsp_duty = DropField("HSP Duty", self)
+        self.c2_hsp_freq = DropField("HSP Local Freq", self)
 
         # ---------------------------
         # case3 fields
@@ -309,6 +311,7 @@ class ViewerCard(QGroupBox):
         self.case2_form.addRow(self.c2_m2_duty)
         self.case2_form.addRow(self.c2_m3_duty)
         self.case2_form.addRow(self.c2_hsp_duty)
+        self.case2_form.addRow(self.c2_hsp_freq)
 
         self.case2_layout.addLayout(self.case2_form)
         self.main_layout.addWidget(self.case2_box)
@@ -350,7 +353,7 @@ class ViewerCard(QGroupBox):
             self.c1_interval_freq, self.c1_interval_duty,
 
             self.c2_m1_amp, self.c2_m2_amp, self.c2_m3_amp, self.c2_m4_amp,
-            self.c2_m1_duty, self.c2_m2_duty, self.c2_m3_duty, self.c2_hsp_duty,
+            self.c2_m1_duty, self.c2_m2_duty, self.c2_m3_duty, self.c2_hsp_duty, self.c2_hsp_freq,
 
             self.c3_pulse_duty, self.c3_amp_h, self.c3_offset, self.c3_amp_l
         ]
@@ -412,6 +415,7 @@ class ViewerCard(QGroupBox):
             pid_c2_m2_duty=self.c2_m2_duty.pid,
             pid_c2_m3_duty=self.c2_m3_duty.pid,
             pid_c2_hsp_duty=self.c2_hsp_duty.pid,
+            pid_c2_hsp_freq=self.c2_hsp_freq.pid,
 
             # case3
             pid_c3_pulse_duty=self.c3_pulse_duty.pid,
@@ -448,6 +452,7 @@ class ViewerCard(QGroupBox):
                 "m2_duty": self.c2_m2_duty.to_payload_dict(),
                 "m3_duty": self.c2_m3_duty.to_payload_dict(),
                 "hsp_duty": self.c2_hsp_duty.to_payload_dict(),
+                "hsp_freq": self.c2_hsp_freq.to_payload_dict(),
             },
 
             "case3": {
@@ -500,6 +505,7 @@ class ViewerCard(QGroupBox):
         self.c2_m2_duty.apply_payload_dict(c2.get("m2_duty"))
         self.c2_m3_duty.apply_payload_dict(c2.get("m3_duty"))
         self.c2_hsp_duty.apply_payload_dict(c2.get("hsp_duty"))
+        self.c2_hsp_freq.apply_payload_dict(c2.get("hsp_freq"))
 
         # case3
         c3 = data.get("case3", {}) or {}

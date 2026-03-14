@@ -718,11 +718,11 @@ class PulseViewerDialog(QDialog):
         amp_vals = [self._num_from_pid(step_params, p) for p in amp_pids]
 
         # HSP Duty: case1 local period(tl_hsp) 기준 active window
-        # case1의 freq_drop PID에서 로컬 주파수를 읽어 tl_hsp 계산
-        # Null → 100% (tl_hsp 전체 사용)
-        freq_drop_pid = self._payload_pid(viewer_data.get("freq_drop"))
-        case1_freq_raw = self._num_from_pid(step_params, freq_drop_pid)
-        case1_freq_hz = self._convert_freq_to_hz(case1_freq_raw, freq_drop_pid)
+        # case2 섹션의 hsp_freq DropField에서 case1 local frequency PID를 읽어 tl_hsp 계산
+        # Null → HSP 마스킹 비활성 (tl_hsp=0)
+        hsp_freq_pid = self._payload_pid(c2.get("hsp_freq"))
+        case1_freq_raw = self._num_from_pid(step_params, hsp_freq_pid)
+        case1_freq_hz = self._convert_freq_to_hz(case1_freq_raw, hsp_freq_pid)
         tl_hsp = (1.0 / case1_freq_hz) if case1_freq_hz > 0 else 0.0
 
         hsp_duty_raw = self._num_from_pid(step_params, hsp_duty_pid)
