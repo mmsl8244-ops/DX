@@ -1,0 +1,5 @@
+{
+    "process": "processDB",
+    "sheet": "test_vicky",
+    "chamber": "TEST_CHAMBER"
+}

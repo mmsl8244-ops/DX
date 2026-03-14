@@ -1,0 +1,3 @@
+APP_NAME = "RecipeMN" 
+APP_VERSION ="2.0"
+FULL_NAME = f"{APP_NAME} ver{APP_VERSION}"
