@@ -797,6 +797,14 @@ class PulseViewerDialog(QDialog):
             s0, _e0, a0 = segments[-1]
             segments[-1] = (float(s0), float(tg), float(a0))
 
+        # hsp_freq 미설정(tl_hsp=0)이면 M1 duration으로 폴백
+        # → M1 전체를 1 주기로 삼아 hsp_duty% 만큼만 표시
+        if tl_hsp <= 0 and segments and hsp_duty_pct < 99.9:
+            m1_len = float(segments[0][1]) - float(segments[0][0])
+            if m1_len > 0:
+                tl_hsp = m1_len
+                active_len = m1_len * (hsp_duty_pct / 100.0)
+
         return {
             "mode": "PULSE",
             "duration_sec": float(duration_sec),
