@@ -723,7 +723,7 @@ class PulseViewerDialog(QDialog):
         freq_drop_pid = self._payload_pid(viewer_data.get("freq_drop"))
         case1_freq_raw = self._num_from_pid(step_params, freq_drop_pid)
         case1_freq_hz = self._convert_freq_to_hz(case1_freq_raw, freq_drop_pid)
-        tl_hsp = (1.0 / case1_freq_hz) if case1_freq_hz > 0 else tl
+        tl_hsp = (1.0 / case1_freq_hz) if case1_freq_hz > 0 else 0.0
 
         hsp_duty_raw = self._num_from_pid(step_params, hsp_duty_pid)
         hsp_duty_pct = self._safe_pct(hsp_duty_raw, 100.0)
@@ -821,8 +821,9 @@ class PulseViewerDialog(QDialog):
 
         tg = float(runtime.get("tg", 0.0) or 0.0)
         tl = float(runtime.get("tl", 0.0) or 0.0)
-        tl_hsp = float(runtime.get("tl_hsp", tl) or tl)
-        active_len = float(runtime.get("active_len", tl_hsp) or tl_hsp)
+        _tl_hsp_val = runtime.get("tl_hsp")
+        tl_hsp = float(_tl_hsp_val) if _tl_hsp_val is not None else tl
+        active_len = float(runtime.get("active_len") or 0.0)
         mode = str(runtime.get("mode", "") or "").upper()
         segments = runtime.get("segments", []) or []
 
