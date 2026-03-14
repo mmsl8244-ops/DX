@@ -11,16 +11,16 @@ from PyQt5.QtCore import Qt, QTimer
 
 
 _RECIPE_COLORS = [
-    (31, 119, 180),   # blue
-    (214, 39, 40),    # red
-    (44, 160, 44),    # green
-    (255, 127, 14),   # orange
-    (148, 103, 189),  # purple
-    (140, 86, 75),    # brown
-    (227, 119, 194),  # pink
-    (23, 190, 207),   # cyan
-    (188, 189, 34),   # yellow-green
-    (127, 127, 127),  # gray
+    (114, 170, 215),  # light blue
+    (240, 120, 120),  # light red
+    (110, 195, 110),  # light green
+    (255, 180, 90),   # light orange
+    (190, 160, 220),  # light purple
+    (195, 155, 145),  # light brown
+    (240, 175, 220),  # light pink
+    (120, 215, 225),  # light cyan
+    (215, 215, 100),  # light yellow-green
+    (185, 185, 185),  # light gray
 ]
 
 
@@ -1580,6 +1580,7 @@ class PulseViewerDialog(QDialog):
                             for _, _, amp in rt["segments"]:
                                 ymax_case2 = max(ymax_case2, abs(float(amp)))
                     pw.setYRange(-ymax_case2 * 1.15, ymax_case2 * 1.18)
+                    pw.getPlotItem().vb.enableAutoRange(axis=pg.ViewBox.YAxis, enable=False)
 
             self.scroll_v.addWidget(box)
 

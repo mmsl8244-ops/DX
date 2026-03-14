@@ -331,6 +331,15 @@ class ViewerCard(QGroupBox):
 
         self.main_layout.addWidget(self.case3_box)
 
+        # Reset 버튼
+        self.btn_reset = QPushButton("Reset", self)
+        self.btn_reset.setToolTip("이 Viewer의 모든 설정을 초기화합니다.")
+        self.btn_reset.clicked.connect(self._on_reset)
+        reset_row = QHBoxLayout()
+        reset_row.addStretch(1)
+        reset_row.addWidget(self.btn_reset)
+        self.main_layout.addLayout(reset_row)
+
         self.setLayout(self.main_layout)
         self.setMinimumHeight(360)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
@@ -361,6 +370,9 @@ class ViewerCard(QGroupBox):
             w.changed.connect(self.changed.emit)
 
         self._apply_case_visibility()
+
+    def _on_reset(self):
+        self.apply_persist_data({})
 
     def _on_manual_toggled(self, checked: bool):
         self.spin_manual_freq.setEnabled(checked)
