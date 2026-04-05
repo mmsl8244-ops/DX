@@ -1056,8 +1056,9 @@ class PulseViewerDialog(QDialog):
                 use_interval = False
 
         global_shift_val = float(tg * (offset / 100.0))
-        # pulse_duty는 끝점(end position). active ON = pulse_duty% - offset%
-        global_on_val = max(0.0, float(tg * (p_duty / 100.0)) - global_shift_val)
+        global_on_val   = float(tg * (p_duty / 100.0))
+        # offset + pulse_duty가 tg를 초과하면 끝을 tg로 클램프
+        global_on_val = max(0.0, min(global_on_val, tg - global_shift_val))
 
         return {
             "type": "case1",
@@ -1090,7 +1091,9 @@ class PulseViewerDialog(QDialog):
         offset  = self._safe_pct(self._num_from_pid(step_params, self._payload_pid(c3.get("offset"))), 0.0)
 
         shift_sec = float(tg * (offset / 100.0))
-        on_time   = max(0.0, float(tg * (p_duty / 100.0)) - shift_sec)
+        on_time   = float(tg * (p_duty / 100.0))
+        # offset + pulse_duty가 tg를 초과하면 클램프
+        on_time   = max(0.0, min(on_time, tg - shift_sec))
 
         return {
             "type": "case3",

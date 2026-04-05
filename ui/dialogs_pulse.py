@@ -3,11 +3,13 @@ from __future__ import annotations
 from dataclasses import dataclass, asdict
 from typing import Optional, List, Dict, Any
 
+import json
+import os
 from PyQt5.QtWidgets import (
     QDialog, QListWidget, QListWidgetItem, QWidget, QVBoxLayout, QHBoxLayout,
     QPushButton, QLabel, QSplitter, QFrame, QMessageBox, QComboBox, QFormLayout,
     QGroupBox, QScrollArea, QSizePolicy, QCheckBox, QDoubleSpinBox,
-    QAbstractItemView
+    QAbstractItemView, QFileDialog
 )
 from PyQt5.QtCore import Qt, pyqtSignal, QMimeData
 from PyQt5.QtGui import QDrag
@@ -605,8 +607,12 @@ class PulseSettingDialog(QDialog):
 
         # --- Bottom buttons ---
         bottom = QHBoxLayout()
+        self.btn_export_json = QPushButton("Export JSON")
+        self.btn_import_json = QPushButton("Import JSON")
         self.btn_ok = QPushButton("Save")
         self.btn_cancel = QPushButton("Cancel")
+        bottom.addWidget(self.btn_export_json)
+        bottom.addWidget(self.btn_import_json)
         bottom.addStretch(1)
         bottom.addWidget(self.btn_ok)
         bottom.addWidget(self.btn_cancel)
@@ -627,6 +633,8 @@ class PulseSettingDialog(QDialog):
         self.btn_del.clicked.connect(self._remove_viewer)
         self.btn_ok.clicked.connect(self._on_save)
         self.btn_cancel.clicked.connect(self.reject)
+        self.btn_export_json.clicked.connect(self._on_export_json)
+        self.btn_import_json.clicked.connect(self._on_import_json)
 
         # init viewers
         for _ in range(max(1, int(default_viewers))):
@@ -668,6 +676,34 @@ class PulseSettingDialog(QDialog):
             c.setTitle(f"Viewer {i}")
 
         self._update_btn_state()
+
+    def _on_export_json(self):
+        path, _ = QFileDialog.getSaveFileName(
+            self, "Export Pulse Setting", "pulse_setting.json", "JSON Files (*.json)"
+        )
+        if not path:
+            return
+        try:
+            data = self.export_persist_data()
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+            QMessageBox.information(self, "Export", f"Saved to:\n{path}")
+        except Exception as e:
+            QMessageBox.critical(self, "Export Error", str(e))
+
+    def _on_import_json(self):
+        path, _ = QFileDialog.getOpenFileName(
+            self, "Import Pulse Setting", "", "JSON Files (*.json)"
+        )
+        if not path:
+            return
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            self.apply_persist_data(data)
+            QMessageBox.information(self, "Import", "Pulse setting loaded.")
+        except Exception as e:
+            QMessageBox.critical(self, "Import Error", str(e))
 
     def _on_save(self):
         if self.f_global_duration.pid is None or self.f_global_pf.pid is None:
